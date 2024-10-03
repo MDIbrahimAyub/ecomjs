@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Website</title>
+    <style>
+       * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #0077ff;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #0056b3;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    margin: 20px 0;
+    font-size: 3vw;
+    text-align: center;
+}
+
+.products {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Ensures responsive layout */
+}
+
+.product {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition */
+    flex: 1 1 calc(30% - 20px); /* Responsive sizing */
+}
+
+.product:hover {
+    transform: translateY(-10px); /* Scale effect on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.product img {
+    max-width: 80%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.add-to-cart {
+    padding: 10px 30px;
+    background-color: #dadada;
+    color: #000;
+    border: none;
+    margin-top: 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+}
+
+.add-to-cart:hover {
+    background-color: #0077ff; /* Darker green on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+    color: #ddd;
+}
+
+.cart {
+    margin-top: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-items {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-item:last-child {
+    border-bottom: none; /* Remove border from last item */
+}
+
+.checkout-form {
+    margin-top: 20px;
+}
+
+.checkout-form input {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+.checkout-form input:focus {
+    border-color: #0077ff; /* Change border color on focus */
+}
+
+.checkout-button {
+    padding: 10px;
+    background-color: #0077ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+}
+
+.checkout-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+}
+
+@media (max-width: 768px) {
+    .product {
+        flex: 1 1 calc(45% - 20px); /* Adjusts product cards for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .product {
+        flex: 1 1 100%; /* Stacks product cards on mobile */
+    }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>E-commerce Website</h1>
+    </header>
+    <div class="container">
+        <h2>Products</h2>
+        <div class="products">
+            <div class="product" data-name="Product 1" data-price="10">
+                <img src="product_13.png" alt="Product 1">
+                <h3>Zipper</h3>
+                <p>$10.00</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+            <div class="product" data-name="Product 2" data-price="15">
+                <img src="product_14.png" alt="Product 2">
+                <h3>Jacket</h3>
+                <p>$15.00</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+            <div class="product" data-name="Product 3" data-price="20">
+                <img src="product_15.png" alt="Product 3">
+                <h3>Sweater</h3>
+                <p>$20.00</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+        <div class="cart">
+            <h2>Shopping Cart</h2>
+            <ul class="cart-items" id="cart-items"></ul>
+            <h3 id="total-price">Total: $0.00</h3>
+            <form class="checkout-form" id="checkout-form">
+                <input type="text" placeholder="Name" required>
+                <input type="email" placeholder="Email" required>
+                <input type="text" placeholder="Address" required>
+                <button type="submit" class="checkout-button">Checkout</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const cartItemsList = document.getElementById('cart-items');
+        const totalPriceElement = document.getElementById('total-price');
+        const checkoutForm = document.getElementById('checkout-form');
+
+        let cart = [];
+        let totalPrice = 0;
+
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const product = button.parentElement;
+                const productName = product.getAttribute('data-name');
+                const productPrice = parseFloat(product.getAttribute('data-price'));
+
+                // Add product to cart
+                cart.push({ name: productName, price: productPrice });
+                totalPrice += productPrice;
+
+                // Update UI
+                updateCartUI();
+            });
+        });
+
+        function updateCartUI() {
+            cartItemsList.innerHTML = '';
+            cart.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.className = 'cart-item';
+                listItem.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+                cartItemsList.appendChild(listItem);
+            });
+            totalPriceElement.textContent = `Total: $${totalPrice.toFixed(2)}`;
+        }
+
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            window.location.href = "popup.html"
+            // Reset cart
+            cart = [];
+            totalPrice = 0;
+            updateCartUI();
+            checkoutForm.reset();
+        });
+    </script>
+</body>
+</html>
